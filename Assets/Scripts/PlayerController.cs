@@ -54,6 +54,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody myRigid;
 
     private GunController theGunController;
+    private StatusController theStatusController;
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +68,7 @@ public class PlayerController : MonoBehaviour
         originPosY = theCamera.transform.localPosition.y;// 카메라의 캐릭터에 대한 상대위치
         applyCrouchPosY = originPosY;
         theGunController = FindObjectOfType<GunController>();
+        theStatusController = FindObjectOfType<StatusController>();
     }
 
     // Update is called once per frame
@@ -134,13 +136,13 @@ public class PlayerController : MonoBehaviour
     {
         // 만약 Vector3.down 이 아니라 -transform.up 을 쓰면 캐릭터가 뒤집어져 있을때 이상해짐
         isGround = Physics.Raycast(transform.position, Vector3.down, capsuleCollder.bounds.extents.y + 0.3f); //bounds.extents 는 절반 크기, 0.1f로 약간의 여유(경사같은곳에서 안닿았다고 착각할수 있음)
-        theCrosshair.RunningAnimation(!isGround);
+        theCrosshair.JumpingAnimation(!isGround);
     }
 
     //점프 시도
     private void TryJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && isGround)
+        if (Input.GetKeyDown(KeyCode.Space) && isGround && theStatusController.GetCurrentSp() > 0)
         {
             Jump();
         }
@@ -151,17 +153,18 @@ public class PlayerController : MonoBehaviour
     {
         if (isCrouch) // 앉은 상태에서 점프하면 앉은 상태 해제
             Crouch();
+        theStatusController.DecreaseStamina(100);
         myRigid.velocity = transform.up * jumpForce;
     }
 
     //달리기 시도
     private void TryRun()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && theStatusController.GetCurrentSp() > 0)
         {
             Running();
         }
-        if (Input.GetKeyUp(KeyCode.LeftShift))
+        if (Input.GetKeyUp(KeyCode.LeftShift) || theStatusController.GetCurrentSp() <= 0)
         {
             RunningCancel();
         }
@@ -175,6 +178,7 @@ public class PlayerController : MonoBehaviour
         theGunController.CancelFineSight();
         isRun = true;
         theCrosshair.RunningAnimation(isRun);
+        theStatusController.DecreaseStamina(10);
         applySpeed = runSpeed;
     }
 
@@ -201,7 +205,6 @@ public class PlayerController : MonoBehaviour
     {
         if (!isRun && !isCrouch && isGround)
         {
-            Debug.Log(Vector3.Distance(lastPos, transform.position));
             if (Vector3.Distance(lastPos, transform.position) >= 0.0000001f)
                 isWalk = true;
             else

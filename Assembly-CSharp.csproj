@@ -65,12 +65,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\HUD.cs" />
+    <Compile Include="Assets\Scripts\ActionController.cs" />
+    <Compile Include="Assets\Scripts\AxeController.cs" />
+    <Compile Include="Assets\Scripts\CloseWeapon.cs" />
+    <Compile Include="Assets\Scripts\CloseWeaponController.cs" />
     <Compile Include="Assets\Scripts\Crosshair.cs" />
     <Compile Include="Assets\Scripts\Gun.cs" />
     <Compile Include="Assets\Scripts\GunController.cs" />
-    <Compile Include="Assets\Scripts\Hand.cs" />
     <Compile Include="Assets\Scripts\HandController.cs" />
+    <Compile Include="Assets\Scripts\Item.cs" />
+    <Compile Include="Assets\Scripts\ItemPickup.cs" />
+    <Compile Include="Assets\Scripts\PickaxeController.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\Rock.cs" />
+    <Compile Include="Assets\Scripts\SoundManager.cs" />
+    <Compile Include="Assets\Scripts\UI Script\Inventory.cs" />
+    <Compile Include="Assets\Scripts\UI Script\Slot.cs" />
+    <Compile Include="Assets\Scripts\UI Script\StatusController.cs" />
+    <Compile Include="Assets\Scripts\UI Script\test.cs" />
+    <Compile Include="Assets\Scripts\WeaponManager.cs" />
+    <Compile Include="Assets\Scripts\WeaponSway.cs" />
     <None Include="Assets\Water Shader\Water_Shader.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.11f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
