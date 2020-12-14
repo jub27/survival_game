@@ -22,9 +22,24 @@ public class GunController : MonoBehaviour
     [SerializeField]
     private Vector3 originPos;
 
+
+    //레이저 충돌 정보 받아옴
+    private RaycastHit hitInfo;
+
+    [SerializeField]
+    private Camera theCam;
+
+    [SerializeField]//피격 이펙트
+    private GameObject hit_effect_prefab;
+
+
+    private Crosshair theCrosshair;
+
     private void Start()
     {
+        theCrosshair = FindObjectOfType<Crosshair>();
         audioSource = GetComponent<AudioSource>();
+        originPos = Vector3.zero;
     }
 
     // Update is called once per frame
@@ -106,6 +121,7 @@ public class GunController : MonoBehaviour
 
     private void Shoot()
     {
+        theCrosshair.FireAnimation();
         currentGun.currentBulletCount--;
         currentFireRate = currentGun.fireRate; //연사 속도 재계산
         PlaySE(currentGun.fireSound);
@@ -115,14 +131,17 @@ public class GunController : MonoBehaviour
         StopAllCoroutines();
         StartCoroutine(RetroActionCoroutine());
         
-
-        Debug.Log("총알 발사함");
-        
     }
 
     private void Hit()
     {
-
+        float random_accu_min = -theCrosshair.GetAccuracy() - currentGun.accuracy;
+        float random_accu_max = theCrosshair.GetAccuracy() + currentGun.accuracy;
+        if (Physics.Raycast(theCam.transform.position, theCam.transform.forward + new Vector3(Random.Range(random_accu_min, random_accu_max), Random.Range(random_accu_min, random_accu_max), Random.Range(random_accu_min, random_accu_max)), out hitInfo, currentGun.range))
+        {
+            GameObject clone = Instantiate(hit_effect_prefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
+            Destroy(clone, 2.0f);
+        }
     }
 
     IEnumerator RetroActionCoroutine()
@@ -184,6 +203,7 @@ public class GunController : MonoBehaviour
     {
         isFineSightMode = !isFineSightMode;
         currentGun.anim.SetBool("FineSightMode", isFineSightMode);
+        theCrosshair.FineSightAnimation(isFineSightMode);
         if (isFineSightMode)
         {
             StopAllCoroutines();
@@ -218,5 +238,15 @@ public class GunController : MonoBehaviour
     {
         audioSource.clip = _clip;
         audioSource.Play();
+    }
+
+    public Gun GetGun()
+    {
+        return currentGun;
+    }
+
+    public bool GetFineSightMode()
+    {
+        return isFineSightMode;
     }
 }
